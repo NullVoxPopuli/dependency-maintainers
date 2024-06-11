@@ -104,6 +104,10 @@ let tableData = [...MAINTAINERS.entries()].map((entry) => ({
 
 tableData.sort((a, b) => a["# Packages"] - b["# Packages"]);
 
+console.info(`
+  Number of maintainers: ${maintainers.size}
+  Number of packages: ${SEEN_DEPS.size}
+`);
 console.table(tableData);
 
 if (NOT_FOUND.size > 0) {
