@@ -105,10 +105,10 @@ let tableData = [...MAINTAINERS.entries()].map((entry) => ({
 tableData.sort((a, b) => a["# Packages"] - b["# Packages"]);
 
 console.info(`
-  Number of maintainers: ${maintainers.size}
+  Number of maintainers: ${MAINTAINERS.size}
   Number of packages: ${SEEN_DEPS.size}
 `);
-console.table(tableData);
+console.table(tableData.reverse());
 
 if (NOT_FOUND.size > 0) {
   console.info("The following packages could not be found and were skipped");
