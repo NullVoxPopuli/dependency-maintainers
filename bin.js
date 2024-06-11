@@ -70,20 +70,18 @@ function updateMaintainers(npmInfo) {
 const QUEUE = [];
 
 async function traverseGraph() {
-  while (QUEUE.length > 0) {
-    let depName = QUEUE.pop();
+  async function processDep(depName) {
+    if (SEEN_DEPS.has(depName)) {
+      return;
+    }
 
     console.debug(`Processed ${SEEN_DEPS.size}. Processing ${depName}`);
-
-    if (SEEN_DEPS.has(depName)) {
-      continue;
-    }
 
     let info = await getPackageInfo(depName);
 
     if (!info) {
       SEEN_DEPS.add(depName);
-      continue;
+      return;
     }
 
     updateMaintainers(info);
@@ -93,6 +91,21 @@ async function traverseGraph() {
     let subDeps = await getDeclaredDeps(info);
 
     QUEUE.push(...subDeps);
+  }
+
+  async function prepareBatch(batch) {
+    await Promise.all(batch.map((depName) => processDep(depName)));
+  }
+
+  while (QUEUE.length > 0) {
+    let batch = [];
+
+    for (let i = 0; i < Math.min(QUEUE.length, 20); i++) {
+      let depName = QUEUE.pop();
+      batch.push(depName);
+    }
+
+    await prepareBatch(batch);
   }
 }
 
