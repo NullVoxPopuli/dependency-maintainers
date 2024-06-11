@@ -1,7 +1,7 @@
 {
   "name": "dependency-maintainers",
   "type": "module",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "bin.js",
   "bin": {
     "dependency-maintainers": "bin.js",

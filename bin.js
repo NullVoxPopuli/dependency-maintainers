@@ -1,9 +1,12 @@
+#!/usr/bin/env node
+
 import path from "node:path";
 import fs from "node:fs/promises";
 import process from "node:process";
 import { execa } from "execa";
 
 const CWD = process.cwd();
+const DEBUG = process.env.DEBUG;
 
 async function readPackageJson() {
   let packageJson = path.join(CWD, "package.json");
@@ -70,6 +73,10 @@ const QUEUE = [];
 async function traverseGraph() {
   while (QUEUE.length > 0) {
     let depName = QUEUE.pop();
+
+    if (DEBUG) {
+      console.debug("Processing", depName);
+    }
 
     if (SEEN_DEPS.has(depName)) {
       continue;
