@@ -1,0 +1,13 @@
+{
+  "name": "dependency-maintainers",
+  "type": "module",
+  "version": "1.0.0",
+  "main": "bin.js",
+  "bin": {
+    "dependency-maintainers": "bin.js",
+    "depmain": "bin.js"
+  },
+  "keywords": ["maintainer", "npm", "package", "node_modules", "modules", "node", "dependencies", "dependency"],
+  "author": "NullVoxPopuli",
+  "license": "GPL-3"
+}
