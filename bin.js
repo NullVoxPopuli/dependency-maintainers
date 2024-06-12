@@ -35,8 +35,15 @@ async function getPackageInfo(name) {
   } catch (e) {
     if (typeof e === "object" && e !== null) {
       if ("message" in e) {
-        if (e.message.includes("code E404")) {
+        let msg = e.message;
+        if (msg.includes("code E404")) {
           NOT_FOUND.add(name);
+
+          return;
+        }
+
+        if (msg.includes("code E401")) {
+          NOT_AUTHORIZED.add(name);
 
           return;
         }
@@ -50,6 +57,7 @@ async function getPackageInfo(name) {
 const SEEN_DEPS = new Set();
 const MAINTAINERS = new Map();
 const NOT_FOUND = new Set();
+const NOT_AUTHORIZED = new Set();
 
 function updateMaintainers(npmInfo) {
   /**
@@ -130,4 +138,11 @@ console.table(tableData.reverse());
 if (NOT_FOUND.size > 0) {
   console.info("The following packages could not be found and were skipped");
   console.log(NOT_FOUND);
+}
+
+if (NOT_AUTHORIZED.size > 0) {
+  console.info(
+    "The following packages required authorization and were skipped",
+  );
+  console.log(NOT_AUTHORIZED);
 }
