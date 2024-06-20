@@ -2,10 +2,46 @@
 
 import path from "node:path";
 import fs from "node:fs/promises";
+import fsSync from "node:fs";
 import process from "node:process";
+import url from "node:url";
 import { execa } from "execa";
 
+const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
 const CWD = process.cwd();
+
+async function ensureCacheDir() {
+  let cachePath = path.join(__dirname, ".cache");
+
+  if (!fsSync.existsSync(cachePath)) {
+    await fs.mkdir(cachePath);
+  }
+}
+await ensureCacheDir();
+
+async function cacheResponse(depName, response) {
+  let cachePath = path.join(__dirname, ".cache", depName + ".json");
+  await fs.writeFile(cachePath, JSON.stringify(response));
+}
+
+async function readCachedResponse(depName) {
+  let cachePath = path.join(__dirname, ".cache", depName + ".json");
+
+  if (!fsSync.existsSync(cachePath)) {
+    return;
+  }
+
+  let f = await fs.readFile(cachePath);
+
+  let content = f.toString();
+
+  try {
+    return JSON.parse(content);
+  } catch (e) {
+    console.error(e);
+    return;
+  }
+}
 
 async function readPackageJson() {
   let packageJson = path.join(CWD, "package.json");
@@ -28,6 +64,11 @@ async function getDeclaredDeps(json, includeDev = false) {
 }
 
 async function getPackageInfo(name) {
+  let cached = await readCachedResponse(name);
+
+  if (cached) {
+    return cached;
+  }
   try {
     let { stdout } = await execa`npm info ${name} --json`;
 
