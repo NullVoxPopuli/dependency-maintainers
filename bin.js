@@ -87,16 +87,29 @@ async function traverseGraph() {
 
     let info = await getPackageInfo(depName);
 
+    // Did someone else grab this package while we were waiting?
+    if (SEEN_DEPS.has(depName)) {
+      return;
+    }
+
     if (!info) {
       SEEN_DEPS.add(depName);
       return;
     }
 
+    let subDeps = await getDeclaredDeps(info);
+    //
+    // Did someone else grab this package while we were waiting?
+    if (SEEN_DEPS.has(depName)) {
+      return;
+    }
+
+    // Only do this once, when we know for sure the work won't be duplicated.
     updateMaintainers(info);
 
+    // Now that we've done all our checking, we can safely
+    // never repeat that work again
     SEEN_DEPS.add(depName);
-
-    let subDeps = await getDeclaredDeps(info);
 
     QUEUE.push(...subDeps);
   }
