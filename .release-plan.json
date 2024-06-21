@@ -1,0 +1,17 @@
+{
+  "solution": {
+    "dependency-maintainers": {
+      "impact": "patch",
+      "oldVersion": "1.0.4",
+      "newVersion": "1.0.5",
+      "constraints": [
+        {
+          "impact": "patch",
+          "reason": "Appears in changelog section :house: Internal"
+        }
+      ],
+      "pkgJSONPath": "./package.json"
+    }
+  },
+  "description": "## Release (2024-06-21)\n\ndependency-maintainers 1.0.5 (patch)\n\n#### :house: Internal\n* `dependency-maintainers`\n  * [#3](https://github.com/NullVoxPopuli/dependency-maintainers/pull/3) Setup release-plan and ci ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
+}
