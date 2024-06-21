@@ -46,27 +46,20 @@ function incrementUser(user) {
 }
 
 const QUEUE = [];
+const HAS_INFO = new Set();
 
 async function traverseGraph() {
   async function processDep(depName) {
-    if (SEEN_DEPS.has(depName)) {
-      return;
-    }
-
     console.debug(`Processed ${SEEN_DEPS.size}. Processing ${depName}`);
 
     let shouldSkipMaintainers = IN_MONOREPO.has(depName);
     let info = getMonorepoPackage(depName) || (await getPackageInfo(depName));
 
-    // Did someone else grab this package while we were waiting?
-    if (SEEN_DEPS.has(depName)) {
+    if (!info) {
       return;
     }
 
-    if (!info) {
-      SEEN_DEPS.add(depName);
-      return;
-    }
+    HAS_INFO.add(info);
 
     if (!shouldSkipMaintainers) {
       updateMaintainers(info);
@@ -74,20 +67,18 @@ async function traverseGraph() {
 
     let subDeps = await getDeclaredDeps(info);
 
-    // Did someone else grab this package while we were waiting?
-    if (SEEN_DEPS.has(depName)) {
-      return;
-    }
-
-    // Now that we've done all our checking, we can safely
-    // never repeat that work again
-    SEEN_DEPS.add(depName);
-
     QUEUE.push(...subDeps);
   }
 
   async function prepareBatch(batch) {
-    await Promise.all(batch.map((depName) => processDep(depName)));
+    await Promise.all(
+      batch.map((depName) => {
+        if (SEEN_DEPS.has(depName)) return;
+
+        SEEN_DEPS.add(depName);
+        return processDep(depName);
+      }),
+    );
   }
 
   while (QUEUE.length > 0) {
@@ -95,6 +86,12 @@ async function traverseGraph() {
 
     for (let i = 0; i < Math.min(QUEUE.length, BATCH_SIZE); i++) {
       let depName = QUEUE.pop();
+
+      if (SEEN_DEPS.has(depName)) {
+        i--;
+        continue;
+      }
+
       batch.push(depName);
     }
 
