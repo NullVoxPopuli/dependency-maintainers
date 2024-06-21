@@ -1,5 +1,7 @@
 import path from "node:path";
 import url from "node:url";
+import fsSync from "node:fs";
+import fs from "node:fs/promises";
 
 const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
 
@@ -39,3 +41,4 @@ export async function readCachedResponse(depName) {
     console.error(e);
     return;
   }
+}
