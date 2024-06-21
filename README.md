@@ -39,5 +39,3 @@ $ npx dependency-maintainers@latest
 ...
 
 ```
-
-
