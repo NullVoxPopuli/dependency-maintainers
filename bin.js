@@ -2,10 +2,51 @@
 
 import path from "node:path";
 import fs from "node:fs/promises";
+import fsSync from "node:fs";
 import process from "node:process";
+import url from "node:url";
 import { execa } from "execa";
 
+const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
 const CWD = process.cwd();
+
+async function ensureCacheDir() {
+  let cachePath = path.join(__dirname, ".cache");
+
+  if (!fsSync.existsSync(cachePath)) {
+    await fs.mkdir(cachePath);
+  }
+}
+await ensureCacheDir();
+
+async function cacheResponse(depName, response) {
+  let cachePath = path.join(__dirname, ".cache", depName + ".json");
+
+  if (depName.includes("/")) {
+    await fs.mkdir(path.dirname(cachePath), { recursive: true });
+  }
+
+  await fs.writeFile(cachePath, JSON.stringify(response));
+}
+
+async function readCachedResponse(depName) {
+  let cachePath = path.join(__dirname, ".cache", depName + ".json");
+
+  if (!fsSync.existsSync(cachePath)) {
+    return;
+  }
+
+  let f = await fs.readFile(cachePath);
+
+  let content = f.toString();
+
+  try {
+    return JSON.parse(content);
+  } catch (e) {
+    console.error(e);
+    return;
+  }
+}
 
 async function readPackageJson() {
   let packageJson = path.join(CWD, "package.json");
@@ -28,10 +69,19 @@ async function getDeclaredDeps(json, includeDev = false) {
 }
 
 async function getPackageInfo(name) {
+  let cached = await readCachedResponse(name);
+
+  if (cached) {
+    return cached;
+  }
   try {
     let { stdout } = await execa`npm info ${name} --json`;
 
-    return JSON.parse(stdout);
+    let json = JSON.parse(stdout);
+
+    await cacheResponse(name, json);
+
+    return json;
   } catch (e) {
     if (typeof e === "object" && e !== null) {
       if ("message" in e) {
@@ -87,16 +137,29 @@ async function traverseGraph() {
 
     let info = await getPackageInfo(depName);
 
+    // Did someone else grab this package while we were waiting?
+    if (SEEN_DEPS.has(depName)) {
+      return;
+    }
+
     if (!info) {
       SEEN_DEPS.add(depName);
       return;
     }
 
+    let subDeps = await getDeclaredDeps(info);
+    //
+    // Did someone else grab this package while we were waiting?
+    if (SEEN_DEPS.has(depName)) {
+      return;
+    }
+
+    // Only do this once, when we know for sure the work won't be duplicated.
     updateMaintainers(info);
 
+    // Now that we've done all our checking, we can safely
+    // never repeat that work again
     SEEN_DEPS.add(depName);
-
-    let subDeps = await getDeclaredDeps(info);
 
     QUEUE.push(...subDeps);
   }
