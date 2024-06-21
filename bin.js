@@ -11,15 +11,17 @@ import { IN_MONOREPO, getMonorepoPackage } from "./monorepo.js";
 import { getPackageInfo } from "./npm.js";
 import { readPackageJson, getDeclaredDeps } from "./package-json.js";
 import { printSummary } from "./output.js";
+import {
+  SEEN_DEPS,
+  MAINTAINERS,
+  WHO_MAINTAINS,
+  NOT_FOUND,
+  NOT_AUTHORIZED,
+} from "./info-buckets.js";
 
 const CWD = process.cwd();
 
 const BATCH_SIZE = 40;
-const SEEN_DEPS = new Set();
-const MAINTAINERS = new Map();
-const WHO_MAINTAINS = new Set();
-const NOT_FOUND = new Set();
-const NOT_AUTHORIZED = new Set();
 
 function updateMaintainers(npmInfo) {
   /**
@@ -61,11 +63,6 @@ async function traverseGraph() {
       return;
     }
 
-    // Did someone else grab this package while we were waiting?
-    if (SEEN_DEPS.has(depName)) {
-      return;
-    }
-
     if (!info) {
       SEEN_DEPS.add(depName);
       return;
@@ -75,16 +72,16 @@ async function traverseGraph() {
       updateMaintainers(info);
     }
 
-    // Now that we've done all our checking, we can safely
-    // never repeat that work again
-    SEEN_DEPS.add(depName);
-
     let subDeps = await getDeclaredDeps(info);
 
     // Did someone else grab this package while we were waiting?
     if (SEEN_DEPS.has(depName)) {
       return;
     }
+
+    // Now that we've done all our checking, we can safely
+    // never repeat that work again
+    SEEN_DEPS.add(depName);
 
     QUEUE.push(...subDeps);
   }
@@ -111,10 +108,4 @@ let rootDeps = await getDeclaredDeps(rootJson, true);
 QUEUE.push(...rootDeps);
 await traverseGraph();
 
-printSummary({
-  MAINTAINERS,
-  SEEN_DEPS,
-  NOT_FOUND,
-  NOT_AUTHORIZED,
-  WHO_MAINTAINS,
-});
+printSummary();

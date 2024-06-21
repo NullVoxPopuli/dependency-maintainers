@@ -1,6 +1,8 @@
 import { execa } from "execa";
 import { cacheResponse, readCachedResponse } from "./cache.js";
 
+import { NOT_AUTHORIZED, NOT_FOUND } from "./info-buckets.js";
+
 export async function getPackageInfo(name) {
   let cached = await readCachedResponse(name);
 

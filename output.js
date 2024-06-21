@@ -1,10 +1,12 @@
-export function printSummary({
-  MAINTAINERS,
+import {
   SEEN_DEPS,
+  MAINTAINERS,
+  WHO_MAINTAINS,
   NOT_FOUND,
   NOT_AUTHORIZED,
-  WHO_MAINTAINS,
-}) {
+} from "./info-buckets.js";
+
+export function printSummary() {
   let tableData = [...MAINTAINERS.entries()].map((entry) => ({
     "NPM Name": entry[0],
     "# Packages": entry[1],
