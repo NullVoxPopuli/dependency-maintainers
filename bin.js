@@ -21,6 +21,11 @@ await ensureCacheDir();
 
 async function cacheResponse(depName, response) {
   let cachePath = path.join(__dirname, ".cache", depName + ".json");
+
+  if (depName.includes("/")) {
+    await fs.mkdir(path.dirname(cachePath), { recursive: true });
+  }
+
   await fs.writeFile(cachePath, JSON.stringify(response));
 }
 
@@ -72,7 +77,11 @@ async function getPackageInfo(name) {
   try {
     let { stdout } = await execa`npm info ${name} --json`;
 
-    return JSON.parse(stdout);
+    let json = JSON.parse(stdout);
+
+    await cacheResponse(name, json);
+
+    return json;
   } catch (e) {
     if (typeof e === "object" && e !== null) {
       if ("message" in e) {
