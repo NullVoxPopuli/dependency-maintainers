@@ -31,6 +31,10 @@
     "@manypkg/get-packages": "^2.2.1",
     "execa": "^9.2.0"
   },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
+  },
   "devDependencies": {
     "prettier": "^3.3.2",
     "release-plan": "^0.9.0",
