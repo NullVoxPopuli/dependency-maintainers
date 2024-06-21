@@ -1,12 +1,6 @@
 {
   "name": "dependency-maintainers",
-  "type": "module",
   "version": "1.0.4",
-  "main": "bin.js",
-  "bin": {
-    "dependency-maintainers": "bin.js",
-    "depmain": "bin.js"
-  },
   "keywords": [
     "maintainer",
     "npm",
@@ -17,13 +11,33 @@
     "dependencies",
     "dependency"
   ],
-  "author": "NullVoxPopuli",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:NullVoxPopuli/dependency-maintainers.git"
+  },
+  "scripts": {
+    "lint": "prettier --check .",
+    "lint:fix": "prettier --write ."
+  },
   "license": "GPL-3",
-  "devDependencies": {
-    "prettier": "^3.3.2"
+  "author": "NullVoxPopuli",
+  "type": "module",
+  "main": "bin.js",
+  "bin": {
+    "dependency-maintainers": "bin.js",
+    "depmain": "bin.js"
   },
   "dependencies": {
     "@manypkg/get-packages": "^2.2.1",
     "execa": "^9.2.0"
+  },
+  "devDependencies": {
+    "prettier": "^3.3.2",
+    "release-plan": "^0.9.0",
+    "typescript": "^5.5.2"
+  },
+  "volta": {
+    "node": "20.15.0",
+    "pnpm": "9.4.0"
   }
 }
