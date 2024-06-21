@@ -23,6 +23,7 @@
     "prettier": "^3.3.2"
   },
   "dependencies": {
+    "@manypkg/get-packages": "^2.2.1",
     "execa": "^9.2.0"
   }
 }
