@@ -1,17 +1,8 @@
 {
   "solution": {
     "dependency-maintainers": {
-      "impact": "minor",
-      "oldVersion": "1.0.6",
-      "newVersion": "1.1.0",
-      "constraints": [
-        {
-          "impact": "minor",
-          "reason": "Appears in changelog section :rocket: Enhancement"
-        }
-      ],
-      "pkgJSONPath": "./package.json"
+      "oldVersion": "1.1.0"
     }
   },
-  "description": "## Release (2024-07-06)\n\ndependency-maintainers 1.1.0 (minor)\n\n#### :rocket: Enhancement\n* `dependency-maintainers`\n  * [#11](https://github.com/NullVoxPopuli/dependency-maintainers/pull/11) Closes [#9](https://github.com/NullVoxPopuli/dependency-maintainers/issues/9), support scanning a whole monorepo. Add --force (to clear …cache), --recursive (for monorepo), --help, --verbose (for the old output), new output has a progress bar now ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
+  "description": "\n\n\n\n"
 }
