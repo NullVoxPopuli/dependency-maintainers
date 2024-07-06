@@ -29,6 +29,7 @@
   },
   "dependencies": {
     "@manypkg/get-packages": "^2.2.1",
+    "cli-progress": "^3.12.0",
     "execa": "^9.2.0"
   },
   "publishConfig": {
