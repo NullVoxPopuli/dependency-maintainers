@@ -14,6 +14,10 @@ const CWD = process.cwd();
  */
 const monorepoInfo = await getPackages(CWD);
 
+export function getAllPackageJSONs() {
+  return monorepoInfo.packages.map((pkg) => pkg.packageJson);
+}
+
 export const IN_MONOREPO = new Set(
   monorepoInfo.packages.map((pkg) => pkg.packageJson.name),
 );

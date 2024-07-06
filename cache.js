@@ -14,6 +14,11 @@ async function ensureCacheDir() {
 }
 await ensureCacheDir();
 
+export async function clearCache() {
+  await fs.rm(path.join(__dirname, ".cache"), { recursive: true });
+  await ensureCacheDir();
+}
+
 export async function cacheResponse(depName, response) {
   let cachePath = path.join(__dirname, ".cache", depName + ".json");
 
