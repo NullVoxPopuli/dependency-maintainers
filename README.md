@@ -28,14 +28,26 @@ $ npx dependency-maintainers@latest
 │ 8       │ 'fritzy'                    │ 25         │
 │ 9       │ 'lukekarrys'                │ 23         │
 │ 10      │ 'saquibkhan'                │ 23         │
-│ 11      │ 'npm-cli-ops'               │ 23         │
-│ 12      │ 'gr2m'                      │ 14         │
-│ 13      │ 'octokitbot'                │ 12         │
-│ 14      │ 'nickfloyd'                 │ 12         │
-│ 15      │ 'kfcampbell'                │ 12         │
-│ 16      │ 'rwjblue'                   │ 10         │
-│ 17      │ 'types'                     │ 10         │
-│ 18      │ 'jonschlinkert'             │ 10         │
 ...
+```
 
+
+## Arguments / Flags
+
+```bash
+--recursive, -r     In a monorepo, find the montainers of every (package in the monorepo)'s (dev)dependencies
+
+                      npx dependency-maintainers --recursive
+
+--verbose, -v       Print extra logging to stdout
+
+                      npx dependency-maintainers --verbose
+
+--force             Force a cache refresh
+
+                      npx dependency-maintainers --force
+
+--help, -h          show this message
+
+                      npx dependency-maintainers --help
 ```
